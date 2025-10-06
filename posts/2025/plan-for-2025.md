@@ -20,5 +20,7 @@ Prometheus and Grafana to record the backend log.
 3.	Utilize training resources for CKA preparation:
 Leverage platforms like KodeKloud or other relevant courses. (Optional)
 
+<img src="https://pixabay.com/get/gcf2b3903dedcb6624e4c6ee2150f04e2e9cd05eb1f7ef4e98b77c7a4e6fe54f1328edb96683e87cf3d8e815899e91006.jpg" alt="Fall, Trees" title="Fall Trees Hill">
+
 ## In the Future (2026-2027)
 Achieve the AWS Certified DevOps Engineer - Professional certification.
