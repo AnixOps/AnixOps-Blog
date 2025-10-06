@@ -1,0 +1,21 @@
+{
+  "name": "anixops-blog",
+  "version": "1.0.0",
+  "description": "Lightweight blog framework for Cloudflare Workers",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "build": "node scripts/build.js",
+    "preview": "wrangler dev"
+  },
+  "dependencies": {
+    "hono": "^4.0.0",
+    "marked": "^11.0.0",
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231218.0",
+    "wrangler": "^3.22.1"
+  }
+}
