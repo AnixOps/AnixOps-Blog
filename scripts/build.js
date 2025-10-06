@@ -27,6 +27,38 @@ function slugify(text) {
     .trim();
 }
 
+// 递归查找所有 markdown 文件
+function findAllMarkdownFiles(dir, fileList = []) {
+  const files = fs.readdirSync(dir);
+
+  files.forEach(file => {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+
+    if (stat.isDirectory()) {
+      // 递归查找子目录
+      findAllMarkdownFiles(filePath, fileList);
+    } else if (file.endsWith('.md')) {
+      fileList.push(filePath);
+    }
+  });
+
+  return fileList;
+}
+
+// 从文件路径提取分类信息
+function extractCategoryFromPath(filePath) {
+  const relativePath = path.relative(postsDir, filePath);
+  const pathParts = relativePath.split(path.sep);
+  
+  // 如果在子文件夹中，使用文件夹名作为分类
+  if (pathParts.length > 1) {
+    return pathParts[0];
+  }
+  
+  return null;
+}
+
 function buildPosts() {
   console.log('🔨 Building blog posts...');
 
@@ -36,23 +68,24 @@ function buildPosts() {
     console.log('📁 Created posts directory');
   }
 
-  // 读取所有 markdown 文件
-  const files = fs.readdirSync(postsDir).filter(file => file.endsWith('.md'));
+  // 递归查找所有 markdown 文件
+  const allFiles = findAllMarkdownFiles(postsDir);
 
-  if (files.length === 0) {
+  if (allFiles.length === 0) {
     console.log('⚠️  No markdown files found in posts directory');
-    console.log('📝 Creating example posts...');
+    console.log('📝 Creating example posts with organized structure...');
     createExamplePosts();
     return buildPosts(); // 递归调用以处理示例文章
   }
 
-  const posts = files.map(file => {
-    const filePath = path.join(postsDir, file);
+  console.log(`📚 Found ${allFiles.length} markdown file(s)`);
+
+  const posts = allFiles.map(filePath => {
     const fileContent = fs.readFileSync(filePath, 'utf-8');
     const { data, content } = matter(fileContent);
 
     // 生成 slug
-    const slug = data.slug || slugify(data.title || path.basename(file, '.md'));
+    const slug = data.slug || slugify(data.title || path.basename(filePath, '.md'));
 
     // 转换 markdown 为 HTML
     const htmlContent = marked.parse(content);
@@ -63,14 +96,20 @@ function buildPosts() {
       .substring(0, 200)
       .trim() + '...';
 
+    // 从路径提取分类（如果在子文件夹中）
+    const autoCategory = extractCategoryFromPath(filePath);
+    const category = data.category || autoCategory;
+
     return {
       slug,
       title: data.title || 'Untitled',
       date: data.date || new Date().toISOString().split('T')[0],
       author: data.author || 'AnixOps',
       tags: data.tags || [],
+      category: category,
       excerpt,
-      content: htmlContent
+      content: htmlContent,
+      filePath: path.relative(rootDir, filePath) // 保存相对路径便于调试
     };
   });
 
@@ -82,20 +121,42 @@ export const posts = ${JSON.stringify(posts, null, 2)};
 
   fs.writeFileSync(outputFile, postsJS, 'utf-8');
   console.log(`✅ Built ${posts.length} post(s) successfully!`);
+  
+  // 按分类分组显示
+  const categorized = {};
   posts.forEach(post => {
-    console.log(`   - ${post.title} (${post.slug})`);
+    const cat = post.category || 'Uncategorized';
+    if (!categorized[cat]) categorized[cat] = [];
+    categorized[cat].push(post);
+  });
+
+  Object.entries(categorized).forEach(([category, categoryPosts]) => {
+    console.log(`\n   📁 ${category}:`);
+    categoryPosts.forEach(post => {
+      console.log(`      - ${post.title} (${post.slug})`);
+    });
   });
 }
 
 function createExamplePosts() {
+  // 创建分类文件夹结构示例
+  const categories = ['tutorials', 'news', '2025'];
+  categories.forEach(cat => {
+    const catDir = path.join(postsDir, cat);
+    if (!fs.existsSync(catDir)) {
+      fs.mkdirSync(catDir, { recursive: true });
+    }
+  });
+
   const examplePosts = [
     {
-      filename: 'welcome-to-anixops-blog.md',
+      filename: '2025/welcome-to-anixops-blog.md',
       content: `---
 title: Welcome to AnixOps Blog
 date: 2025-01-15
 author: AnixOps Team
 tags: [announcement, blog]
+category: announcement
 excerpt: Welcome to our new blog platform built with modern web technologies.
 ---
 
@@ -141,12 +202,13 @@ Happy blogging! 🎉
 `
     },
     {
-      filename: 'getting-started-with-cloudflare-workers.md',
+      filename: 'tutorials/getting-started-with-cloudflare-workers.md',
       content: `---
 title: Getting Started with Cloudflare Workers
 date: 2025-01-10
 author: AnixOps Team
 tags: [cloudflare, tutorial, serverless]
+category: tutorial
 excerpt: Learn how to deploy applications on Cloudflare Workers platform.
 ---
 
@@ -187,12 +249,13 @@ Cloudflare Workers provides an excellent platform for modern web applications. G
 `
     },
     {
-      filename: 'modern-web-development-2025.md',
+      filename: 'news/modern-web-development-2025.md',
       content: `---
 title: Modern Web Development in 2025
 date: 2025-01-05
 author: AnixOps Team
 tags: [web-development, trends, 2025]
+category: tech-news
 excerpt: Exploring the latest trends and technologies shaping web development.
 ---
 
@@ -237,10 +300,18 @@ Stay tuned for more updates! 🚀
   ];
 
   examplePosts.forEach(({ filename, content }) => {
-    fs.writeFileSync(path.join(postsDir, filename), content, 'utf-8');
+    const fullPath = path.join(postsDir, filename);
+    const dir = path.dirname(fullPath);
+    
+    // 确保目录存在
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    
+    fs.writeFileSync(fullPath, content, 'utf-8');
   });
 
-  console.log('✅ Created example posts');
+  console.log('✅ Created example posts with organized structure');
 }
 
 // 运行构建

@@ -13,7 +13,10 @@ export const i18n = {
     tags: 'Tags',
     lightMode: 'Light mode',
     darkMode: 'Dark mode',
-    language: 'Language'
+    language: 'Language',
+    allPosts: 'All Posts',
+    noPosts: 'No posts found in this category.',
+    categories: 'Categories'
   },
   zh: {
     blogTitle: 'AnixOps 博客',
@@ -27,6 +30,9 @@ export const i18n = {
     tags: '标签',
     lightMode: '浅色模式',
     darkMode: '深色模式',
-    language: '语言'
+    language: '语言',
+    allPosts: '全部文章',
+    noPosts: '此分类下暂无文章。',
+    categories: '分类'
   }
 };

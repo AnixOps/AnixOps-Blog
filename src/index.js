@@ -12,9 +12,22 @@ app.get('/favicon.ico', (c) => c.notFound());
 // 首页 - 博客列表
 app.get('/', (c) => {
   const lang = c.req.query('lang') || 'en';
-  const sortedPosts = [...posts].sort((a, b) => 
+  const categoryFilter = c.req.query('category');
+  
+  let filteredPosts = [...posts];
+  
+  // 按分类筛选
+  if (categoryFilter) {
+    filteredPosts = filteredPosts.filter(p => p.category === categoryFilter);
+  }
+  
+  // 按日期排序
+  const sortedPosts = filteredPosts.sort((a, b) => 
     new Date(b.date) - new Date(a.date)
   );
+  
+  // 获取所有分类
+  const categories = [...new Set(posts.map(p => p.category).filter(Boolean))].sort();
   
   return c.html(getHTML({
     title: `AnixOps Blog`,
@@ -25,8 +38,21 @@ app.get('/', (c) => {
           <p class="subtitle">${i18n[lang].blogSubtitle}</p>
         </header>
         
+        ${categories.length > 0 ? `
+          <div class="category-filter">
+            <a href="/?lang=${lang}" class="category-btn ${!categoryFilter ? 'active' : ''}">
+              ${i18n[lang].allPosts || 'All Posts'} (${posts.length})
+            </a>
+            ${categories.map(cat => `
+              <a href="/?category=${cat}&lang=${lang}" class="category-btn ${categoryFilter === cat ? 'active' : ''}">
+                ${cat} (${posts.filter(p => p.category === cat).length})
+              </a>
+            `).join('')}
+          </div>
+        ` : ''}
+        
         <div class="posts-grid">
-          ${sortedPosts.map(post => `
+          ${sortedPosts.length > 0 ? sortedPosts.map(post => `
             <article class="post-card">
               <div class="post-meta">
                 <time datetime="${post.date}">${new Date(post.date).toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { 
@@ -34,17 +60,22 @@ app.get('/', (c) => {
                   month: 'long', 
                   day: 'numeric' 
                 })}</time>
+                ${post.category ? `<span class="category-badge">${post.category}</span>` : ''}
                 ${post.tags ? `
                   <div class="tags">
                     ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                   </div>
                 ` : ''}
               </div>
-              <h2><a href="/post/${post.slug}">${post.title}</a></h2>
+              <h2><a href="/post/${post.slug}?lang=${lang}">${post.title}</a></h2>
               <p class="excerpt">${post.excerpt || ''}</p>
-              <a href="/post/${post.slug}" class="read-more">${i18n[lang].readMore} →</a>
+              <a href="/post/${post.slug}?lang=${lang}" class="read-more">${i18n[lang].readMore} →</a>
             </article>
-          `).join('')}
+          `).join('') : `
+            <div class="no-posts">
+              <p>${i18n[lang].noPosts || 'No posts found in this category.'}</p>
+            </div>
+          `}
         </div>
       </div>
     `,

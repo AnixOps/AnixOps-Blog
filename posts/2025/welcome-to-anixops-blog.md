@@ -1,8 +1,9 @@
 ---
 title: Welcome to AnixOps Blog
-date: 2025-10-6
+date: 2025-10-06
 author: Dawei Zhang (@KaliJerry)
 tags: [announcement, blog]
+category: announcement
 excerpt: Welcome to our new blog platform built with modern web technologies.
 ---
 
@@ -25,7 +26,7 @@ Simply create a new `.md` file in the `posts` directory with frontmatter:
 ```markdown
 ---
 title: Your Post Title
-date: 2025-1-1
+date: 2025-01-15
 author: Your Name
 tags: [tag1, tag2]
 ---
