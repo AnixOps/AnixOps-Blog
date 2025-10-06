@@ -118,6 +118,27 @@ export function getHTML({ title, content, lang = 'en' }) {
       border-color: var(--accent);
     }
 
+    .search-link {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .search-link:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
     /* 博客头部 */
     .blog-header {
       text-align: center;
@@ -138,6 +159,79 @@ export function getHTML({ title, content, lang = 'en' }) {
     .subtitle {
       font-size: 1.25rem;
       color: var(--text-secondary);
+    }
+
+    /* 搜索框 */
+    .search-container {
+      margin: 2rem 0;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 0.5rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 0.75rem 1.25rem;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    .search-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .search-button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .search-icon {
+      font-size: 1.2rem;
+    }
+
+    .search-info {
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      border-left: 4px solid var(--accent);
+      color: var(--text-secondary);
+    }
+
+    .search-info p {
+      margin: 0;
+      font-size: 0.95rem;
     }
 
     /* 分类筛选 */
@@ -457,9 +551,22 @@ export function getHTML({ title, content, lang = 'en' }) {
         gap: 0.5rem;
       }
 
-      .theme-toggle, .lang-toggle {
+      .theme-toggle, .lang-toggle, .search-link {
         padding: 0.4rem 0.8rem;
         font-size: 0.85rem;
+      }
+
+      .search-form {
+        flex-direction: column;
+      }
+
+      .search-button {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .search-info {
+        font-size: 0.9rem;
       }
     }
 
@@ -486,8 +593,11 @@ export function getHTML({ title, content, lang = 'en' }) {
 <body>
   <nav class="top-nav">
     <div class="nav-content">
-      <a href="/" class="logo">AnixOps Blog</a>
+      <a href="/?lang=${lang}" class="logo">AnixOps Blog</a>
       <div class="nav-controls">
+        <a href="/search?lang=${lang}" class="search-link">
+          <span>🔍</span>
+        </a>
         <button class="lang-toggle" onclick="toggleLanguage()">
           ${lang === 'zh' ? 'EN' : '中文'}
         </button>
@@ -531,13 +641,39 @@ export function getHTML({ title, content, lang = 'en' }) {
       window.location.href = url.toString();
     }
 
-    // 初始化主题
+    // 初始化主题（自动检测系统偏好）
     (function() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      document.documentElement.setAttribute('data-theme', savedTheme);
+      // 检查是否有保存的主题偏好
+      let theme = localStorage.getItem('theme');
+      
+      // 如果没有保存的偏好，则检测系统偏好
+      if (!theme) {
+        // 使用 matchMedia 检测系统暗色模式偏好
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          theme = 'dark';
+        } else {
+          theme = 'light';
+        }
+      }
+      
+      // 应用主题
+      document.documentElement.setAttribute('data-theme', theme);
       const icon = document.querySelector('.theme-icon');
       if (icon) {
-        icon.textContent = savedTheme === 'light' ? '🌙' : '☀️';
+        icon.textContent = theme === 'light' ? '🌙' : '☀️';
+      }
+      
+      // 监听系统主题变化（如果用户没有手动设置过主题）
+      if (window.matchMedia && !localStorage.getItem('theme')) {
+        const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        darkModeQuery.addEventListener('change', (e) => {
+          const newTheme = e.matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          const icon = document.querySelector('.theme-icon');
+          if (icon) {
+            icon.textContent = newTheme === 'light' ? '🌙' : '☀️';
+          }
+        });
       }
     })();
   </script>

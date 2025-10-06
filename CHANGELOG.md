@@ -6,6 +6,42 @@
 
 ## English
 
+### Version 1.2.0 - Search & Theme Detection (2025-01-XX)
+
+#### ✨ New Features
+
+**1. Full-Text Search**
+- ✅ Search across post titles, content, tags, and categories
+- ✅ Case-insensitive keyword matching
+- ✅ Search UI with live results
+- ✅ Search API endpoint: `GET /api/search?q=keyword`
+- ✅ Empty search validation and redirect
+
+**2. System Theme Detection**
+- ✅ Auto-detect system dark/light theme on page load
+- ✅ Uses `prefers-color-scheme` media query
+- ✅ Respects user manual toggle (saved in localStorage)
+- ✅ Real-time theme switching when system preference changes
+
+#### 🐛 Bug Fixes
+
+**1. Search Type Safety**
+- ✅ Fixed `TypeError: tag.toLowerCase is not a function`
+- ✅ Added type coercion for all search fields
+- ✅ Added array validation for tags
+
+**2. Search UX**
+- ✅ Empty search queries now redirect to homepage
+- ✅ Improved search result display
+
+#### 📚 Documentation
+
+- ✅ Updated README.md with search and theme features
+- ✅ Added search API documentation
+- ✅ Documented theme detection behavior
+
+---
+
 ### Version 1.1.0 - Folder Management (2025-10-06)
 
 #### ✨ New Features
@@ -177,6 +213,42 @@ https://yourblog.com/?category=news&lang=zh
 ---
 
 ## 中文
+
+### 版本 1.2.0 - 搜索与主题检测 (2025-01-XX)
+
+#### ✨ 新增功能
+
+**1. 全文搜索**
+- ✅ 在文章标题、内容、标签和分类中搜索
+- ✅ 不区分大小写的关键词匹配
+- ✅ 搜索界面和实时结果
+- ✅ 搜索 API 端点：`GET /api/search?q=关键词`
+- ✅ 空搜索验证和重定向
+
+**2. 系统主题检测**
+- ✅ 页面加载时自动检测系统的暗色/亮色主题
+- ✅ 使用 `prefers-color-scheme` 媒体查询
+- ✅ 遵从用户手动切换（保存在 localStorage）
+- ✅ 当系统偏好更改时实时切换主题
+
+#### 🐛 Bug 修复
+
+**1. 搜索类型安全**
+- ✅ 修复了 `TypeError: tag.toLowerCase is not a function`
+- ✅ 为所有搜索字段添加了类型转换
+- ✅ 为标签添加了数组验证
+
+**2. 搜索用户体验**
+- ✅ 空搜索查询现在会重定向到主页
+- ✅ 改进了搜索结果显示
+
+#### 📚 文档更新
+
+- ✅ 更新了 README.md，包含搜索和主题功能
+- ✅ 添加了搜索 API 文档
+- ✅ 记录了主题检测行为
+
+---
 
 ### 版本 1.1.0 - 文件夹管理功能 (2025-10-06)
 

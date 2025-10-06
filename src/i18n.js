@@ -16,7 +16,16 @@ export const i18n = {
     language: 'Language',
     allPosts: 'All Posts',
     noPosts: 'No posts found in this category.',
-    categories: 'Categories'
+    categories: 'Categories',
+    search: 'Search',
+    searchPlaceholder: 'Search posts...',
+    searchResults: 'Search Results',
+    noSearchResults: 'No posts found matching your search.',
+    uploadImage: 'Upload Image',
+    imageUrl: 'Image URL',
+    copyUrl: 'Copy URL',
+    uploadSuccess: 'Image uploaded successfully!',
+    uploadError: 'Failed to upload image.'
   },
   zh: {
     blogTitle: 'AnixOps 博客',
@@ -33,6 +42,15 @@ export const i18n = {
     language: '语言',
     allPosts: '全部文章',
     noPosts: '此分类下暂无文章。',
-    categories: '分类'
+    categories: '分类',
+    search: '搜索',
+    searchPlaceholder: '搜索文章...',
+    searchResults: '搜索结果',
+    noSearchResults: '没有找到匹配的文章。',
+    uploadImage: '上传图片',
+    imageUrl: '图片链接',
+    copyUrl: '复制链接',
+    uploadSuccess: '图片上传成功！',
+    uploadError: '图片上传失败。'
   }
 };

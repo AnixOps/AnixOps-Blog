@@ -13,7 +13,8 @@ A lightweight, modern blog framework built for Cloudflare Workers. Write in Mark
 - 📝 **Markdown Writing**: Write posts in simple Markdown format
 - ⚡ **Cloudflare Workers**: Deploy on edge network for global performance
 - 🎨 **Modern Design**: Clean, responsive UI inspired by anixops.com
-- 🌓 **Dark Mode**: Automatic theme switching with user preference
+- 🌓 **Dark Mode**: Auto-detect system theme preference with manual toggle
+- 🔍 **Full-Text Search**: Search across titles, content, tags, and categories
 - 🌍 **i18n Support**: Built-in internationalization (English & Chinese)
 - 🚀 **Zero Config**: Simple setup, automatic build process
 - 📱 **Mobile Friendly**: Fully responsive design
@@ -239,7 +240,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - 📝 **Markdown 写作**：使用简单的 Markdown 格式写文章
 - ⚡ **Cloudflare Workers**：部署在边缘网络，全球性能优异
 - 🎨 **现代设计**：简洁响应式 UI，灵感来自 anixops.com
-- 🌓 **暗色模式**：自动主题切换，支持用户偏好
+- 🌓 **暗色模式**：自动检测系统主题偏好，支持手动切换
+- 🔍 **全文搜索**：搜索标题、内容、标签和分类
 - 🌍 **国际化**：内置 i18n 支持（中英文）
 - 🚀 **零配置**：简单设置，自动构建流程
 - 📱 **移动友好**：完全响应式设计
@@ -415,12 +417,15 @@ npm run deploy
 
 - `GET /` - 博客主页（文章列表）
 - `GET /post/:slug` - 单篇文章
+- `GET /search` - 搜索页面
 - `GET /api/posts` - 所有文章的 JSON API
+- `GET /api/search` - 搜索 API
 
 查询参数：
 - `?lang=zh` - 切换到中文
 - `?lang=en` - 切换到英文（默认）
 - `?category=tutorials` - 按分类筛选
+- `?q=keyword` - 搜索关键词
 
 ### 📁 文章组织方式
 
