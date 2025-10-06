@@ -2,6 +2,20 @@
 // 请勿手动编辑
 export const posts = [
   {
+    "slug": "my-2025-devops-plan",
+    "title": "My 2025 DevOps Plan",
+    "date": "2025-10-06T00:00:00.000Z",
+    "author": "Dawei Zhang (@KaliJerry)",
+    "tags": [
+      "blog",
+      "plan"
+    ],
+    "category": "plan",
+    "excerpt": "My personal DevOps plan for 2025, focusing on certifications and key skills.",
+    "content": "<h1>My DevOps Plan for 2025</h1>\n<h2>Certification</h2>\n<ol>\n<li>   Prepare for and obtain the Certified Kubernetes Administrator (CKA) certification.</li>\n<li>   Study for and pass the AWS Certified Solutions Architect - Associate (SAA-C03) and Microsoft Certified: Azure Administrator Associate (AZ-104) exams.</li>\n</ol>\n<h2>Skills</h2>\n<ol>\n<li>   Master a complete CI/CD workflow:<br>Code Commit -&gt; Automation Test -&gt; Build Docker Image -&gt; Push the Image to the Repositories (ECR) -&gt; Automation Kubernetes Cluster</li>\n<li>   Implement robust logging and monitoring:<br>Prometheus and Grafana to record the backend log.</li>\n<li>   Utilize training resources for CKA preparation:<br>Leverage platforms like KodeKloud or other relevant courses. (Optional)</li>\n</ol>\n<h2>In the Future (2026-2027)</h2>\n<p>Achieve the AWS Certified DevOps Engineer - Professional certification.</p>\n",
+    "filePath": "posts\\2025\\plan-for-2025.md"
+  },
+  {
     "slug": "welcome-to-anixops-blog",
     "title": "Welcome to AnixOps Blog",
     "date": "2025-10-06T00:00:00.000Z",
