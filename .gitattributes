@@ -1,0 +1,17 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Markdown files
+*.md text
+
+# JavaScript files
+*.js text
+
+# Config files
+*.json text
+*.toml text
+*.yml text
+*.yaml text
+
+# Posts directory - all markdown
+posts/*.md text
