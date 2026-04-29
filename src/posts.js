@@ -16,47 +16,16 @@ export const posts = [
     "filePath": "posts\\2025\\plan-for-2025.md"
   },
   {
-    "slug": "welcome-to-anixops-blog",
-    "title": "Welcome to AnixOps Blog",
-    "date": "2025-10-06T00:00:00.000Z",
+    "slug": "10",
+    "title": "记录一个普通人10年上网经历",
+    "date": "2026-04-29T00:00:00.000Z",
     "author": "Dawei Zhang (@KaliJerry)",
     "tags": [
-      "announcement",
       "blog"
     ],
-    "category": "announcement",
-    "excerpt": "Welcome to our new blog platform built with modern web technologies.",
-    "content": "<h1>Welcome to AnixOps Blog</h1>\n<p>We&#39;re excited to launch our new blog platform! This is a lightweight, fast, and modern blogging system built specifically for Cloudflare Workers.</p>\n<h2>Features</h2>\n<ul>\n<li><strong>📝 Markdown Support</strong>: Write your posts in simple Markdown</li>\n<li><strong>🎨 Beautiful Design</strong>: Clean and modern interface with dark mode</li>\n<li><strong>🌍 Internationalization</strong>: Built-in i18n support (English &amp; Chinese)</li>\n<li><strong>⚡ Lightning Fast</strong>: Deployed on Cloudflare&#39;s global network</li>\n<li><strong>🎯 SEO Friendly</strong>: Optimized for search engines</li>\n</ul>\n<h2>How to Use</h2>\n<p>Simply create a new <code>.md</code> file in the <code>posts</code> directory with frontmatter:</p>\n<pre><code class=\"language-markdown\">---\ntitle: Your Post Title\ndate: 2025-01-15\nauthor: Your Name\ntags: [tag1, tag2]\n---\n\nYour content here...\n</code></pre>\n<p>Then run <code>npm run build</code> to generate the static files and <code>npm run deploy</code> to publish!</p>\n<h2>Technology Stack</h2>\n<ul>\n<li><strong>Hono</strong>: Lightweight web framework for Cloudflare Workers</li>\n<li><strong>Marked</strong>: Fast Markdown parser</li>\n<li><strong>Gray Matter</strong>: YAML front matter parser</li>\n<li><strong>Cloudflare Workers</strong>: Edge computing platform</li>\n</ul>\n<hr>\n<p>Happy blogging! 🎉</p>\n",
-    "filePath": "posts\\2025\\welcome-to-anixops-blog.md"
-  },
-  {
-    "slug": "modern-web-development-in-2025",
-    "title": "Modern Web Development in 2025",
-    "date": "2025-10-06T00:00:00.000Z",
-    "author": "Dawei Zhang (@KaliJerry)",
-    "tags": [
-      "web-development",
-      "trends",
-      2025
-    ],
-    "category": "tech-news",
-    "excerpt": "Exploring the latest trends and technologies shaping web development.",
-    "content": "<h1>Modern Web Development in 2025</h1>\n<p>The web development landscape continues to evolve rapidly. Let&#39;s explore the key trends shaping our industry.</p>\n<h2>Edge Computing</h2>\n<p>Edge computing has become mainstream, with platforms like Cloudflare Workers, Vercel Edge, and Deno Deploy leading the way.</p>\n<h3>Benefits:</h3>\n<ul>\n<li>Lower latency</li>\n<li>Better performance</li>\n<li>Global distribution</li>\n<li>Cost efficiency</li>\n</ul>\n<h2>Framework Evolution</h2>\n<p>Modern frameworks are focusing on:</p>\n<ul>\n<li><strong>Server Components</strong>: Better performance and SEO</li>\n<li><strong>Islands Architecture</strong>: Partial hydration for better performance</li>\n<li><strong>Type Safety</strong>: TypeScript everywhere</li>\n<li><strong>Developer Experience</strong>: Better tooling and DX</li>\n</ul>\n<h2>The Future</h2>\n<p>The web is becoming faster, more accessible, and more developer-friendly. We&#39;re excited to be part of this journey!</p>\n<h3>What&#39;s Next?</h3>\n<ul>\n<li>AI-powered development tools</li>\n<li>WebAssembly adoption</li>\n<li>Better performance metrics</li>\n<li>Improved accessibility standards</li>\n</ul>\n<hr>\n<p>Stay tuned for more updates! 🚀</p>\n",
-    "filePath": "posts\\news\\modern-web-development-2025.md"
-  },
-  {
-    "slug": "getting-started-with-cloudflare-workers",
-    "title": "Getting Started with Cloudflare Workers",
-    "date": "2025-10-06T00:00:00.000Z",
-    "author": "Dawei Zhang (@KaliJerry)",
-    "tags": [
-      "cloudflare",
-      "tutorial",
-      "serverless"
-    ],
-    "category": "tutorial",
-    "excerpt": "Learn how to deploy applications on Cloudflare Workers platform.",
-    "content": "<h1>Getting Started with Cloudflare Workers</h1>\n<p>Cloudflare Workers is a serverless platform that allows you to run JavaScript code at the edge, closer to your users.</p>\n<h2>Why Cloudflare Workers?</h2>\n<ol>\n<li><strong>Global Distribution</strong>: Your code runs in 300+ data centers worldwide</li>\n<li><strong>Zero Cold Starts</strong>: Instant execution with V8 isolates</li>\n<li><strong>Cost Effective</strong>: Generous free tier and pay-as-you-go pricing</li>\n<li><strong>Easy Deployment</strong>: Simple CLI tools and Git integration</li>\n</ol>\n<h2>Quick Start</h2>\n<pre><code class=\"language-bash\"># Install Wrangler CLI\nnpm install -g wrangler\n\n# Login to Cloudflare\nwrangler login\n\n# Deploy your app\nwrangler deploy\n</code></pre>\n<h2>Best Practices</h2>\n<ul>\n<li>Keep your code lightweight</li>\n<li>Use caching strategically</li>\n<li>Monitor usage and performance</li>\n<li>Implement proper error handling</li>\n</ul>\n<h2>Conclusion</h2>\n<p>Cloudflare Workers provides an excellent platform for modern web applications. Give it a try!</p>\n",
-    "filePath": "posts\\tutorials\\getting-started-with-cloudflare-workers.md"
+    "category": "blog",
+    "excerpt": "这是一篇在代理圈子混了挺多年的入门开发者写的文章，献给所有正在上网的朋友们。",
+    "content": "<h1>记录一个普通人10年上网经历</h1>\n<h2>2017-2018</h2>\n<p>本人这个时候不懂什么网络技术，更不用说是“高深”的 Linux 命令行了。当初之所以要想着自建，是因为当时我用的“VPN”（我知道这个用词不标准，先这么用着吧）太慢了，想着能不能自建来让上网更快一些。<br>一开始选择L2TP/IPSec一键安装脚本（秋水逸冰大佬的那个版本），之后发现只有第一次能用，之后就再用就连不上了。加上当时好像是编译安装，还买的是瘦猴Virmach的零点几美元0.5g的机器。<br>至于当初为什么要挑选他家的机器，主要还是因为之前买的vps都是OpenVZ虚拟化的，装不了锐速（也是个古老的名字了），他家是我找到最便宜的KVM虚拟化的机器了，哈哈。<br>后面发现了Shadowsocks，所以就去尝试了，好像还是用的逗比根据地的脚本搭建的。再后来出现了ShadowsocksR，于是我也去跟风安装了。<br>关于防止TCP拥塞问题，我用的是魔改版BBR，好像当初博客背景是一张哆啦A梦的图片，主题是蓝色的。<br>就那样我和几个好哥们就用着这些现在看起来垃圾堆里捡出来的东西。<br>后面情况有所好转是在大概18年中期，我发现了OneVPS这家的5刀日本机器，一开始直连的，给我高兴坏了，可惜好景不长这家很快就绕路了，延迟到了200ms。<br>不过没有停留太久，因为玩MC的Hypixel服务器，我接触到了阿里云香港，印象里好像是35元轻量50mbps，网络质量也挺不错的，用着SStap加速MC，顺便也做代理使用了。<br>再后面的记忆有些模糊了，总之就是机场自建VPN换着用。后面一些时间v2ray出了vmess，还有vmess+tls+ws+CDN的玩法也用过，最后的Trojan没怎么用，懒得折腾了。</p>\n<h2>2019-2021</h2>\n<p>如果说2017到2018是蛮荒时代，到了19和21这三年逐渐就变得进入了佛系时代了。因为学业原因，只有周末回家，为了图省事，就直接用的机场，当然偶尔还是会去打开那些VPS推荐网站找那些传家宝，渴望蹲到一台CN2-GIA的机器。<br>不过事与愿违，因为网站大部分都是二手消息，所以我并没有获得优质的线路机，但我也没怎么失望，因为那个时候上网需求也就看看Youtube还有P**nhub（你懂的）。<br>不过后面我还是找到了Kurun的三刀机器凑合在用，还有hostyun，最早一笔流水在20年12月，当时花了两年时间买成了白银VIP哈哈。</p>\n<h2>2022-2023</h2>\n<p>事情的转折发生在22年的寒假，我在某个地方发现了BWH（以下称搬瓦工）的机器打折的消息，花重金50多美金买了美国CN2-GIA机器，应该是DC6机房的，500g流量。当初觉得自己老牛了，觉得自己的美西CN2秒天秒地。<br>后面一次偶然的机会，注意到了Hostloc这个网站（之前也看到过里面的帖子），于是花了5元人民币在淘宝买了邀请码进去了。后面貌似是23年最后几天了，一个叫跑路云的厂商出现了，133的美西三网优化，看着就眼馋，后面一想反正有搬瓦工保底就买个吧，反正流量不够用。<br>后面进了443的群组，认识了很多人还有别的商家。因为群里面有人推荐，渐渐地又去NodeSeek看起来了。<br>至此玩机生涯进入了深水区，不再是追求一分钱一分货了，而是想着薅羊毛捡便宜。后来的事情大家可能有所耳闻，跑路云正如它的名字一样，在两个月后跑路了，我找第四方支付退回了一笔133，但是后面充的香港机器好像就不了了之了。<br>吃一堑长一智，这个时候的我因为搬瓦工到期了，又去找到了Kurun的机器，想着是之后再也不买新的机器了。<br>但是事与愿违，自从进入了机圈，每天都是在刷着NS和hostloc，逐渐又萌生找亚太直连的机器的想法了，一有这个想法我就一发不可收，拼命找着，正巧后面Sharon出了5刀香港，用着还不错，不过因为后面各种各样的原因也就没在续费了。<br>再后来直连机器的最终应该是Claw了，当初的香港确实是挺好的，用的也挺开心。但是因为我哥们的校园网问题，害怕vless直连被抓，就想着用国内的机器中转，于是找起了很多转发商家比如NNR,Gorelay。<br>也是好巧不巧，阿里云轻量这个时候杀了出来。真是想睡觉送枕头了，立刻下单。<br>然后用Gost的wss来做隧道，稳定玩了很久，后面也没去管那么多了。</p>\n<h2>2024-2025</h2>\n<p>在24年到25年总体上网方式固定了，基本上直连保留两个claw香港和claw新加坡，然后其他用阿里云入口分别到香港日本美国（现在也差不多的形式）。<br>不过饱暖思淫欲，这个时候就想着搞台IEPL/IPLC专线机器，幻想不过GFW不会被封，安全一点。<br>一开始甚至想去收台水墨云，后来一想还是算了，然后又在蹲ggy的低价套餐，也没蹲到。严格意义上来说第一次体验“专线”还是煤老板的ipv6入ipv4出的广港。<br>不过碳云的稳定性也是公认的一般，后面还因为鼓掌没到位被煤老板踢出群了哈哈。<br>再到后来市面上的专线机器如雨后春笋一般冒出头来，9.9元每月的机器也时不时冒出来。<br>再到25年过年的时候了，一批IX机器冒出来了，正巧还有阿里云轻量，说干就干，当机立断就下单了CMHK.IO的50.99的机器，想着2t双向怎么招都够用了（现在也还在用着只不过迁移到肥仔云了）。<br>这之后的日子逐渐佛系起来了，因为那批云厂专线出来后，购买了鹏的沪日POP和深港IX，配合着4年的腾讯云4折轻量还有朋友的阿里云轻量也就那样凑合用着了。<br>大概是24年中，我摒弃了一键脚本的安装方式了，采用了xboard，来做小型的机场了，转发方式也变到极光面板做转发（其实这套老方案我还没做淘汰）。</p>\n<h2>2026</h2>\n<p>到了今年一切都没变，但一切又好像产生了些变化，我的机场架构正忙着大改（git仓库有了，现在还在打磨中）。外界的变化就是4月来的国内机器大规模清退，我的碳云还有几家专线入口也都下线了。<br>目前还在靠云厂+IX苟延残喘，不过为了防范于未然，我的机场永远保证存在两套直连的线路最低限度保证可用性。静观其变，遇到最差的情况可能会考虑采用特殊手段来进行联网尝试。</p>\n<h2>小结</h2>\n<p>希望未来的路会越来越好吧，也希望未来的自己看到现在的自己发现的是大量不足，这样才证明是在不断进步啊。</p>\n",
+    "filePath": "posts\\2026\\GFW-in-2026.md"
   }
 ];
