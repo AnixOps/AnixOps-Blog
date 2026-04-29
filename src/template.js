@@ -589,6 +589,19 @@ export function getHTML({ title, content, lang = 'en' }) {
       text-decoration: underline;
     }
   </style>
+  <script>
+    // 主题初始化 - 放在 head 中，在 body 渲染前执行，防止闪烁
+    (function() {
+      var theme = localStorage.getItem('theme');
+      if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        theme = 'dark';
+      } else if (!theme) {
+        theme = 'light';
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+      window.__initTheme__ = theme;
+    })();
+  </script>
 </head>
 <body>
   <nav class="top-nav">
@@ -627,7 +640,7 @@ export function getHTML({ title, content, lang = 'en' }) {
       const newTheme = currentTheme === 'light' ? 'dark' : 'light';
       html.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
-      
+
       const icon = document.querySelector('.theme-icon');
       icon.textContent = newTheme === 'light' ? '🌙' : '☀️';
     }
@@ -641,41 +654,14 @@ export function getHTML({ title, content, lang = 'en' }) {
       window.location.href = url.toString();
     }
 
-    // 初始化主题（自动检测系统偏好）
-    (function() {
-      // 检查是否有保存的主题偏好
-      let theme = localStorage.getItem('theme');
-      
-      // 如果没有保存的偏好，则检测系统偏好
-      if (!theme) {
-        // 使用 matchMedia 检测系统暗色模式偏好
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          theme = 'dark';
-        } else {
-          theme = 'light';
-        }
-      }
-      
-      // 应用主题
-      document.documentElement.setAttribute('data-theme', theme);
+    // 页面加载后设置主题图标
+    document.addEventListener('DOMContentLoaded', function() {
+      const theme = window.__initTheme__ || 'light';
       const icon = document.querySelector('.theme-icon');
       if (icon) {
         icon.textContent = theme === 'light' ? '🌙' : '☀️';
       }
-      
-      // 监听系统主题变化（如果用户没有手动设置过主题）
-      if (window.matchMedia && !localStorage.getItem('theme')) {
-        const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        darkModeQuery.addEventListener('change', (e) => {
-          const newTheme = e.matches ? 'dark' : 'light';
-          document.documentElement.setAttribute('data-theme', newTheme);
-          const icon = document.querySelector('.theme-icon');
-          if (icon) {
-            icon.textContent = newTheme === 'light' ? '🌙' : '☀️';
-          }
-        });
-      }
-    })();
+    });
   </script>
 </body>
 </html>`;
