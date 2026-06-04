@@ -120,6 +120,34 @@ function copyFile(sourcePath, targetPath) {
   fs.copyFileSync(sourcePath, targetPath);
 }
 
+function formatFrontmatterValue(value) {
+  if (Array.isArray(value)) {
+    return `[${value.map(item => JSON.stringify(item)).join(', ')}]`;
+  }
+
+  if (value && typeof value === 'object') {
+    return JSON.stringify(value, null, 2);
+  }
+
+  if (typeof value === 'string') {
+    return JSON.stringify(value);
+  }
+
+  return String(value);
+}
+
+function serializeFrontmatter(data) {
+  const lines = ['---'];
+  for (const [key, value] of Object.entries(data)) {
+    if (value === undefined || value === null) {
+      continue;
+    }
+    lines.push(`${key}: ${formatFrontmatterValue(value)}`);
+  }
+  lines.push('---');
+  return lines.join('\n');
+}
+
 function syncPosts() {
   if (!fs.existsSync(sourceDir)) {
     throw new Error(`Content source not found: ${sourceDir}`);
@@ -166,7 +194,7 @@ function syncPosts() {
       frontmatter.category = category;
     }
 
-    const output = matter.stringify(body, frontmatter);
+    const output = `${serializeFrontmatter(frontmatter)}\n${body.trimStart()}\n`;
     ensureDir(path.dirname(destinationPath));
     fs.writeFileSync(destinationPath, output, 'utf8');
   }
