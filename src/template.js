@@ -432,6 +432,12 @@ export function getHTML({ title, content, lang = 'en' }) {
       margin: 1.5rem 0;
     }
 
+    .markdown-body hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 3rem 0 2rem;
+    }
+
     .markdown-body strong {
       color: var(--text-primary);
       font-weight: 750;
@@ -467,6 +473,7 @@ export function getHTML({ title, content, lang = 'en' }) {
       overflow-x: auto;
       margin: 1.5rem 0;
       border: 1px solid var(--border);
+      line-height: 1.7;
     }
 
     .markdown-body pre code {
@@ -482,6 +489,10 @@ export function getHTML({ title, content, lang = 'en' }) {
       font-style: italic;
     }
 
+    .markdown-body blockquote p {
+      margin: 0.75rem 0;
+    }
+
     .markdown-body ul,
     .markdown-body ol {
       margin: 1.5rem 0;
@@ -494,6 +505,7 @@ export function getHTML({ title, content, lang = 'en' }) {
 
     .markdown-body table {
       width: 100%;
+      min-width: 520px;
       border-collapse: collapse;
       margin: 1.75rem 0;
       display: block;
@@ -524,8 +536,20 @@ export function getHTML({ title, content, lang = 'en' }) {
       max-width: 100%;
       height: auto;
       border-radius: 8px;
-      margin: 1.5rem 0;
+      margin: 2rem auto 0.75rem;
       border: 1px solid var(--border);
+    }
+
+    .markdown-body p:has(> img) {
+      margin-bottom: 0;
+    }
+
+    .markdown-body p em:only-child {
+      display: block;
+      margin-top: -0.25rem;
+      text-align: center;
+      font-size: 0.95rem;
+      line-height: 1.5;
     }
 
     .post-footer {
