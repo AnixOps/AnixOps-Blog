@@ -1,0 +1,65 @@
+name: Deploy blog from content repo
+
+on:
+  push:
+    branches:
+      - main
+  repository_dispatch:
+    types:
+      - content-updated
+  workflow_dispatch:
+    inputs:
+      content_repository:
+        description: "Content repository owner/name"
+        required: false
+        default: "kalijerry/X-post"
+      content_ref:
+        description: "Content branch or ref"
+        required: false
+        default: "main"
+
+concurrency:
+  group: blog-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CONTENT_REPOSITORY: ${{ github.event.client_payload.repository || inputs.content_repository || vars.CONTENT_REPOSITORY || 'kalijerry/X-post' }}
+      CONTENT_REF: ${{ github.event.client_payload.ref || inputs.content_ref || vars.CONTENT_REF || 'main' }}
+
+    steps:
+      - name: Checkout build repo
+        uses: actions/checkout@v4
+
+      - name: Checkout content repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.CONTENT_REPOSITORY }}
+          ref: ${{ env.CONTENT_REF }}
+          token: ${{ secrets.CONTENT_REPO_TOKEN || github.token }}
+          path: content-source
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync content
+        run: npm run sync:content
+        env:
+          CONTENT_SOURCE: ${{ github.workspace }}/content-source
+
+      - name: Build site
+        run: npm run build
+
+      - name: Deploy to Cloudflare Workers
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

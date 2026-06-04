@@ -8,6 +8,15 @@
 
 A lightweight, modern blog framework built for Cloudflare Workers. Write in Markdown, deploy globally in seconds.
 
+### Content Repo Mode
+
+This repository is the build/deploy side. Markdown source lives in a separate content repository and is synced in before each build.
+
+- Local default source: `../X-post`
+- Override with `CONTENT_SOURCE=/path/to/content-repo`
+- GitHub Actions syncs the content repo automatically before `npm run build`
+- For automatic cross-repo dispatch, set `BUILD_REPO_TOKEN`, `CONTENT_REPO_TOKEN`, `CLOUDFLARE_API_TOKEN`, and `CLOUDFLARE_ACCOUNT_ID`
+
 ### ✨ Features
 
 - 📝 **Markdown Writing**: Write posts in simple Markdown format
@@ -31,7 +40,15 @@ npm install
 
 #### 2. Write Your First Post
 
-Create a new file in the `posts` directory (supports nested folders):
+Create a new file in the content repository. If you are testing locally, sync it into this repo first:
+
+```bash
+npm run sync:content
+```
+
+The synced markdown is placed under `posts/_content/`, and static files are copied to `public/static/`.
+
+Create a new Markdown file in the content repository:
 
 \`\`\`markdown
 ---
@@ -184,11 +201,13 @@ npm run deploy
 
 ### Option 2: GitHub Actions
 
-Set up automatic deployment on push:
+Set up automatic deployment on push from the content repository:
 
 1. Add Cloudflare API token to GitHub Secrets
-2. Create `.github/workflows/deploy.yml`
-3. Push to main branch
+2. Add `CONTENT_REPO_TOKEN` if the content repo is private
+3. Create `.github/workflows/deploy-from-content.yml` in this repo
+4. Create `.github/workflows/notify-build.yml` in the content repo
+5. Push content changes to `main`
 
 ## 🔗 API Endpoints
 
@@ -235,6 +254,15 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 一个轻量级、现代化的博客框架，专为 Cloudflare Workers 构建。使用 Markdown 写作，秒级全球部署。
 
+### 内容仓库模式
+
+这个仓库只负责构建和部署。Markdown 源文件放在单独的内容仓库里，每次构建前会先同步进来。
+
+- 本地默认来源：`../X-post`
+- 可通过 `CONTENT_SOURCE=/path/to/content-repo` 覆盖
+- GitHub Actions 会在 `npm run build` 之前自动同步内容仓库
+- 跨仓库自动触发时，需要配置 `BUILD_REPO_TOKEN`、`CONTENT_REPO_TOKEN`、`CLOUDFLARE_API_TOKEN` 和 `CLOUDFLARE_ACCOUNT_ID`
+
 ### ✨ 特性
 
 - 📝 **Markdown 写作**：使用简单的 Markdown 格式写文章
@@ -258,7 +286,15 @@ npm install
 
 #### 2. 写你的第一篇文章
 
-在 `posts` 目录创建新文件（支持嵌套文件夹）：
+先在内容仓库里创建新文件。如果你在本地测试，先同步到这个仓库：
+
+```bash
+npm run sync:content
+```
+
+同步后的 Markdown 会放到 `posts/_content/`，静态文件会复制到 `public/static/`。
+
+然后在内容仓库里创建新的 Markdown 文件：
 
 \`\`\`markdown
 ---
@@ -407,11 +443,13 @@ npm run deploy
 
 #### 方式 2: GitHub Actions
 
-设置自动部署：
+设置从内容仓库自动部署：
 
 1. 添加 Cloudflare API token 到 GitHub Secrets
-2. 创建 `.github/workflows/deploy.yml`
-3. 推送到 main 分支
+2. 如果内容仓库是私有的，添加 `CONTENT_REPO_TOKEN`
+3. 在这个仓库创建 `.github/workflows/deploy-from-content.yml`
+4. 在内容仓库创建 `.github/workflows/notify-build.yml`
+5. 推送内容变更到 `main`
 
 ### 🔗 API 端点
 
