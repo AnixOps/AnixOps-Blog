@@ -410,6 +410,7 @@ export function getHTML({ title, content, lang = 'en' }) {
     .markdown-body {
       font-size: 1.1rem;
       line-height: 1.8;
+      overflow-wrap: break-word;
     }
 
     .markdown-body h1,
@@ -429,6 +430,15 @@ export function getHTML({ title, content, lang = 'en' }) {
 
     .markdown-body p {
       margin: 1.5rem 0;
+    }
+
+    .markdown-body strong {
+      color: var(--text-primary);
+      font-weight: 750;
+    }
+
+    .markdown-body em {
+      color: var(--text-secondary);
     }
 
     .markdown-body a {
@@ -482,11 +492,40 @@ export function getHTML({ title, content, lang = 'en' }) {
       margin: 0.5rem 0;
     }
 
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.75rem 0;
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .markdown-body th,
+    .markdown-body td {
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .markdown-body th {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .markdown-body td {
+      color: var(--text-secondary);
+    }
+
     .markdown-body img {
+      display: block;
       max-width: 100%;
       height: auto;
       border-radius: 8px;
       margin: 1.5rem 0;
+      border: 1px solid var(--border);
     }
 
     .post-footer {
