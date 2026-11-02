@@ -35,7 +35,10 @@ export function postUrl(post, lang) {
 }
 
 export function sortByDate(list) {
-  return [...list].sort((a, b) => new Date(b.date) - new Date(a.date));
+  // 同一天发布的文章按 slug 倒序，系列里篇号大的算“更新”，上一篇/下一篇顺序才对
+  return [...list].sort((a, b) =>
+    (new Date(b.date) - new Date(a.date)) ||
+    String(b.slug).localeCompare(String(a.slug), undefined, { numeric: true }));
 }
 
 function metaLine(post, lang) {
