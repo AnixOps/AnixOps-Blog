@@ -3,6 +3,7 @@ import { serveStatic } from 'hono/cloudflare-workers';
 import { posts } from './posts.js';
 import { getHTML } from './template.js';
 import { i18n } from './i18n.js';
+import { escapeHtml, resolveLang, formatDate, isoDate, readingLabel, postUrl, sortByDate, featuredCard, postArchive, postRow, searchForm } from './views.js';
 
 const app = new Hono();
 
@@ -11,238 +12,156 @@ app.get('/favicon.ico', (c) => c.notFound());
 
 // 首页 - 博客列表
 app.get('/', (c) => {
-  const lang = c.req.query('lang') || 'en';
+  const lang = resolveLang(c);
   const categoryFilter = c.req.query('category');
-  
-  let filteredPosts = [...posts];
-  
-  // 按分类筛选
-  if (categoryFilter) {
-    filteredPosts = filteredPosts.filter(p => p.category === categoryFilter);
-  }
-  
-  // 按日期排序
-  const sortedPosts = filteredPosts.sort((a, b) => 
-    new Date(b.date) - new Date(a.date)
-  );
-  
-  // 获取所有分类
+  const t = i18n[lang];
+
+  const sortedPosts = sortByDate(categoryFilter ? posts.filter(p => p.category === categoryFilter) : posts);
   const categories = [...new Set(posts.map(p => p.category).filter(Boolean))].sort();
-  
+  const [featured, ...rest] = categoryFilter ? [null, ...sortedPosts] : sortedPosts;
+
   return c.html(getHTML({
-    title: `AnixOps Blog`,
+    title: t.blogTitle,
+    lang,
+    path: c.req.path,
     content: `
       <div class="container">
-        <header class="blog-header">
-          <h1>${i18n[lang].blogTitle}</h1>
-          <p class="subtitle">${i18n[lang].blogSubtitle}</p>
+        <header class="hero">
+          <h1 class="hero-title">${t.blogTitle}</h1>
+          <p class="hero-subtitle">${t.blogSubtitle}</p>
+          ${searchForm(lang)}
         </header>
-        
-        <div class="search-container">
-          <form action="/search" method="get" class="search-form">
-            <input type="hidden" name="lang" value="${lang}">
-            <input 
-              type="text" 
-              name="q" 
-              class="search-input" 
-              placeholder="${i18n[lang].searchPlaceholder}"
-            >
-            <button type="submit" class="search-button">
-              <span class="search-icon">🔍</span>
-            </button>
-          </form>
-        </div>
-        
+
         ${categories.length > 0 ? `
-          <div class="category-filter">
-            <a href="/?lang=${lang}" class="category-btn ${!categoryFilter ? 'active' : ''}">
-              ${i18n[lang].allPosts || 'All Posts'} (${posts.length})
-            </a>
+          <nav class="chips" aria-label="${t.categories}">
+            <a href="/?lang=${lang}" class="chip-link ${!categoryFilter ? 'active' : ''}">${t.allPosts}<span>${posts.length}</span></a>
             ${categories.map(cat => `
-              <a href="/?category=${cat}&lang=${lang}" class="category-btn ${categoryFilter === cat ? 'active' : ''}">
-                ${cat} (${posts.filter(p => p.category === cat).length})
-              </a>
+              <a href="/?category=${encodeURIComponent(cat)}&lang=${lang}" class="chip-link ${categoryFilter === cat ? 'active' : ''}">${escapeHtml(cat)}<span>${posts.filter(p => p.category === cat).length}</span></a>
             `).join('')}
-          </div>
+          </nav>
         ` : ''}
-        
-        <div class="posts-grid">
-          ${sortedPosts.length > 0 ? sortedPosts.map(post => `
-            <article class="post-card">
-              <div class="post-meta">
-                <time datetime="${post.date}">${new Date(post.date).toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}</time>
-                ${post.category ? `<span class="category-badge">${post.category}</span>` : ''}
-                ${post.tags ? `
-                  <div class="tags">
-                    ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                  </div>
-                ` : ''}
-              </div>
-              <h2><a href="/post/${post.slug}?lang=${lang}">${post.title}</a></h2>
-              <p class="excerpt">${post.excerpt || ''}</p>
-              <a href="/post/${post.slug}?lang=${lang}" class="read-more">${i18n[lang].readMore} →</a>
-            </article>
-          `).join('') : `
-            <div class="no-posts">
-              <p>${i18n[lang].noPosts || 'No posts found in this category.'}</p>
-            </div>
-          `}
-        </div>
+
+        ${featured ? featuredCard(featured, lang) : ''}
+        ${sortedPosts.length > 0 ? postArchive(rest, lang) : `<p class="empty">${t.noPosts}</p>`}
       </div>
-    `,
-    lang
+    `
   }));
 });
 
 // 博客文章详情
 app.get('/post/:slug', (c) => {
   const slug = c.req.param('slug');
-  const lang = c.req.query('lang') || 'en';
-  const post = posts.find(p => p.slug === slug);
-  
-  if (!post) {
+  const lang = resolveLang(c);
+  const t = i18n[lang];
+  const ordered = sortByDate(posts);
+  const index = ordered.findIndex(p => p.slug === slug);
+
+  if (index === -1) {
     return c.notFound();
   }
-  
+
+  const post = ordered[index];
+  const newer = ordered[index - 1];
+  const older = ordered[index + 1];
+  const toc = (post.toc || []).filter(h => h.level <= 3);
+  const seriesPosts = post.series
+    ? [...ordered].reverse().filter(p => p.series === post.series)
+    : [];
+  const seriesIndex = seriesPosts.findIndex(p => p.slug === post.slug);
+
   return c.html(getHTML({
-    title: `${post.title} - AnixOps Blog`,
+    title: `${post.title} - ${t.blogTitle}`,
+    description: post.excerpt,
+    lang,
+    path: c.req.path,
+    progress: true,
     content: `
-      <article class="container post-detail">
-        <header class="post-header">
-          <a href="/" class="back-link">← ${i18n[lang].backToList}</a>
-          <h1>${post.title}</h1>
-          <div class="post-meta">
-            <time datetime="${post.date}">${new Date(post.date).toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}</time>
-            ${post.author ? `<span class="author">By ${post.author}</span>` : ''}
+      <article class="container article">
+        <header class="article-header">
+          <a href="/?lang=${lang}" class="back-link">← ${t.backToList}</a>
+          ${post.category ? `<a class="chip" href="/?category=${encodeURIComponent(post.category)}&lang=${lang}">${escapeHtml(post.category)}</a>` : ''}
+          <h1 class="article-title">${escapeHtml(post.title)}</h1>
+          <div class="meta">
+            ${post.author ? `<span class="author">${escapeHtml(post.author)}</span><span class="dot" aria-hidden="true">·</span>` : ''}
+            <time datetime="${isoDate(post.date)}">${formatDate(post.date, lang)}</time>
+            ${readingLabel(post, lang) ? `<span class="dot" aria-hidden="true">·</span><span>${readingLabel(post, lang)}</span>` : ''}
           </div>
-          ${post.tags ? `
-            <div class="tags">
-              ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-            </div>
-          ` : ''}
         </header>
-        
-        <div class="post-content markdown-body">
-          ${post.content}
+
+        ${seriesPosts.length > 1 ? `
+          <details class="series-box">
+            <summary>${t.seriesLabel} <strong>${escapeHtml(post.series)}</strong><span>${t.seriesPosition.replace('{i}', seriesIndex + 1).replace('{n}', seriesPosts.length)}</span></summary>
+            <ol>
+              ${seriesPosts.map(p => `<li>${p.slug === post.slug ? `<strong>${escapeHtml(p.title)}</strong>` : `<a href="${postUrl(p, lang)}">${escapeHtml(p.title)}</a>`}</li>`).join('')}
+            </ol>
+          </details>
+        ` : ''}
+
+        <div class="article-layout ${toc.length >= 3 ? 'has-toc' : ''}">
+          <div class="post-content markdown-body">
+            ${post.content}
+          </div>
+          ${toc.length >= 3 ? `
+            <aside class="toc" aria-label="${t.onThisPage}">
+              <div class="toc-title">${t.onThisPage}</div>
+              <ol>
+                ${toc.map(h => `<li class="toc-l${h.level}"><a href="#${h.id}">${escapeHtml(h.text)}</a></li>`).join('')}
+              </ol>
+            </aside>
+          ` : ''}
         </div>
-        
-        <footer class="post-footer">
-          <a href="/" class="back-link">← ${i18n[lang].backToList}</a>
+
+        <footer class="article-footer">
+          ${post.tags && post.tags.length ? `
+            <div class="tags">${post.tags.map(tag => `<a class="tag" href="/search?q=${encodeURIComponent(tag)}&lang=${lang}">#${escapeHtml(tag)}</a>`).join('')}</div>
+          ` : ''}
+          <nav class="pager">
+            ${older ? `<a class="pager-link" href="${postUrl(older, lang)}"><span>← ${t.prevPost}</span><strong>${escapeHtml(older.title)}</strong></a>` : '<span></span>'}
+            ${newer ? `<a class="pager-link next" href="${postUrl(newer, lang)}"><span>${t.nextPost} →</span><strong>${escapeHtml(newer.title)}</strong></a>` : '<span></span>'}
+          </nav>
         </footer>
       </article>
-    `,
-    lang
+    `
   }));
 });
 
 // 搜索页面
 app.get('/search', (c) => {
-  const lang = c.req.query('lang') || 'en';
+  const lang = resolveLang(c);
+  const t = i18n[lang];
   const query = c.req.query('q') || '';
-  
+
   // 如果搜索内容为空，重定向到主页
   if (!query.trim()) {
     return c.redirect(`/?lang=${lang}`);
   }
-  
-  let searchResults = [];
-  
-  if (query.trim()) {
-    const searchTerm = query.toLowerCase();
-    
-    searchResults = posts.filter(post => {
-      // 搜索标题
-      if (post.title && String(post.title).toLowerCase().includes(searchTerm)) return true;
-      
-      // 搜索摘要
-      if (post.excerpt && String(post.excerpt).toLowerCase().includes(searchTerm)) return true;
-      
-      // 搜索标签
-      if (post.tags && Array.isArray(post.tags)) {
-        if (post.tags.some(tag => String(tag).toLowerCase().includes(searchTerm))) return true;
-      }
-      
-      // 搜索内容（移除HTML标签）
-      if (post.content) {
-        const textContent = String(post.content).replace(/<[^>]*>/g, '').toLowerCase();
-        if (textContent.includes(searchTerm)) return true;
-      }
-      
-      // 搜索分类
-      if (post.category && String(post.category).toLowerCase().includes(searchTerm)) return true;
-      
-      return false;
-    }).sort((a, b) => new Date(b.date) - new Date(a.date));
-  }
-  
+
+  const searchTerm = query.toLowerCase();
+  const searchResults = sortByDate(posts.filter(post => {
+    if (post.title && String(post.title).toLowerCase().includes(searchTerm)) return true;
+    if (post.excerpt && String(post.excerpt).toLowerCase().includes(searchTerm)) return true;
+    if (Array.isArray(post.tags) && post.tags.some(tag => String(tag).toLowerCase().includes(searchTerm))) return true;
+    if (post.content && String(post.content).replace(/<[^>]*>/g, '').toLowerCase().includes(searchTerm)) return true;
+    if (post.category && String(post.category).toLowerCase().includes(searchTerm)) return true;
+    return false;
+  }));
+
   return c.html(getHTML({
-    title: `${i18n[lang].search} - AnixOps Blog`,
+    title: `${t.search} - ${t.blogTitle}`,
+    lang,
+    path: c.req.path,
     content: `
       <div class="container">
-        <header class="blog-header">
-          <h1>${i18n[lang].search}</h1>
-          <p class="subtitle">${i18n[lang].searchResults}</p>
+        <header class="hero hero-compact">
+          <h1 class="hero-title">${t.search}</h1>
+          ${searchForm(lang, query, true)}
+          <p class="search-summary">${t.resultsFor.replace('{n}', searchResults.length)} <strong>“${escapeHtml(query)}”</strong></p>
         </header>
-        
-        <div class="search-container">
-          <form action="/search" method="get" class="search-form">
-            <input type="hidden" name="lang" value="${lang}">
-            <input 
-              type="text" 
-              name="q" 
-              class="search-input" 
-              placeholder="${i18n[lang].searchPlaceholder}"
-              value="${query}"
-              autofocus
-            >
-            <button type="submit" class="search-button">
-              <span class="search-icon">🔍</span>
-              ${i18n[lang].search}
-            </button>
-          </form>
-        </div>
-        
-        <div class="search-info">
-          <p>${searchResults.length} ${lang === 'zh' ? '个结果' : 'results'} "${query}"</p>
-        </div>
-        
-        <div class="posts-grid">
-          ${searchResults.length > 0 ? searchResults.map(post => `
-            <article class="post-card">
-              <div class="post-meta">
-                <time datetime="${post.date}">${new Date(post.date).toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}</time>
-                ${post.category ? `<span class="category-badge">${post.category}</span>` : ''}
-                ${post.tags ? `
-                  <div class="tags">
-                    ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                  </div>
-                ` : ''}
-              </div>
-              <h2><a href="/post/${post.slug}?lang=${lang}">${post.title}</a></h2>
-              <p class="excerpt">${post.excerpt || ''}</p>
-              <a href="/post/${post.slug}?lang=${lang}" class="read-more">${i18n[lang].readMore} →</a>
-            </article>
-          `).join('') : `
-            <div class="no-posts">
-              <p>${i18n[lang].noSearchResults}</p>
-            </div>
-          `}
-        </div>
+        ${searchResults.length > 0
+          ? `<ul class="post-list">${searchResults.map(p => postRow(p, lang)).join('')}</ul>`
+          : `<p class="empty">${t.noSearchResults}</p>`}
       </div>
-    `,
-    lang
+    `
   }));
 });
 
@@ -292,17 +211,18 @@ app.get('/api/posts', (c) => {
 
 // 404
 app.notFound((c) => {
-  const lang = c.req.query('lang') || 'en';
+  const lang = resolveLang(c);
   return c.html(getHTML({
     title: '404 - Not Found',
+    lang,
+    path: c.req.path,
     content: `
       <div class="container error-page">
         <h1>404</h1>
         <p>${i18n[lang].notFound}</p>
-        <a href="/" class="button">${i18n[lang].backToHome}</a>
+        <a href="/?lang=${lang}" class="button">${i18n[lang].backToHome}</a>
       </div>
-    `,
-    lang
+    `
   }), 404);
 });
 
