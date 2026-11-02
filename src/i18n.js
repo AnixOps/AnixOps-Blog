@@ -25,7 +25,19 @@ export const i18n = {
     imageUrl: 'Image URL',
     copyUrl: 'Copy URL',
     uploadSuccess: 'Image uploaded successfully!',
-    uploadError: 'Failed to upload image.'
+    uploadError: 'Failed to upload image.',
+    latest: 'Latest',
+    readingTime: '{n} min read',
+    onThisPage: 'On this page',
+    prevPost: 'Previous',
+    nextPost: 'Next',
+    copy: 'Copy',
+    copied: 'Copied',
+    resultsFor: '{n} results for',
+    toggleTheme: 'Toggle theme',
+    posts: 'Posts',
+    seriesLabel: 'Series',
+    seriesPosition: 'Part {i} of {n}'
   },
   zh: {
     blogTitle: 'AnixOps 博客',
@@ -51,6 +63,18 @@ export const i18n = {
     imageUrl: '图片链接',
     copyUrl: '复制链接',
     uploadSuccess: '图片上传成功！',
-    uploadError: '图片上传失败。'
+    uploadError: '图片上传失败。',
+    latest: '最新文章',
+    readingTime: '约 {n} 分钟读完',
+    onThisPage: '本文目录',
+    prevPost: '上一篇',
+    nextPost: '下一篇',
+    copy: '复制',
+    copied: '已复制',
+    resultsFor: '找到 {n} 篇文章，关键词',
+    toggleTheme: '切换深浅色',
+    posts: '文章',
+    seriesLabel: '系列',
+    seriesPosition: '第 {i} / {n} 篇'
   }
 };

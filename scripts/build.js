@@ -21,10 +21,45 @@ marked.setOptions({
 function slugify(text) {
   return text
     .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .trim();
+}
+
+function stripTags(html) {
+  return html.replace(/<[^>]*>/g, '');
+}
+
+// 给 h2/h3 加锚点 id，并收集目录
+function addHeadingAnchors(html) {
+  const toc = [];
+  const used = new Map();
+  const out = html.replace(/<h([23])>([\s\S]*?)<\/h\1>/g, (match, level, inner) => {
+    const text = stripTags(inner).trim();
+    let id = slugify(text) || `section-${toc.length + 1}`;
+    const seen = used.get(id) || 0;
+    used.set(id, seen + 1);
+    if (seen) id = `${id}-${seen}`;
+    toc.push({ level: Number(level), id, text });
+    return `<h${level} id="${id}"><a class="heading-anchor" href="#${id}" aria-hidden="true">#</a>${inner}</h${level}>`;
+  });
+  return { html: out, toc };
+}
+
+// 一行一段的写法：段落内的单个换行拆成独立段落，排版更透气
+function splitLineParagraphs(html) {
+  return html.replace(/<p>([\s\S]*?)<\/p>/g, (match, inner) => {
+    if (!inner.includes('<br>')) return match;
+    return inner.split(/<br>\n?/).map(part => part.trim()).filter(Boolean).map(part => `<p>${part}</p>`).join('\n');
+  });
+}
+
+// 估算阅读时间：中文约 400 字/分钟，英文约 200 词/分钟
+function readingMinutes(markdown) {
+  const cjk = (markdown.match(/[\u3400-\u9fff]/g) || []).length;
+  const words = markdown.replace(/[\u3400-\u9fff]/g, ' ').split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(cjk / 400 + words / 200));
 }
 
 // 递归查找所有 markdown 文件
@@ -88,7 +123,7 @@ function buildPosts() {
     const slug = data.slug || slugify(data.title || path.basename(filePath, '.md'));
 
     // 转换 markdown 为 HTML
-    const htmlContent = marked.parse(content);
+    const { html: htmlContent, toc } = addHeadingAnchors(splitLineParagraphs(marked.parse(content)));
 
     // 生成摘要（取前200个字符）
     const excerpt = data.excerpt || content
@@ -108,6 +143,9 @@ function buildPosts() {
       tags: data.tags || [],
       category: category,
       excerpt,
+      series: data.series || null,
+      readingMinutes: readingMinutes(content),
+      toc,
       content: htmlContent,
       filePath: path.relative(rootDir, filePath) // 保存相对路径便于调试
     };
