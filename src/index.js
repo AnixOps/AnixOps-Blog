@@ -65,7 +65,8 @@ app.get('/post/:slug', (c) => {
   const older = ordered[index + 1];
   const toc = (post.toc || []).filter(h => h.level <= 3);
   const seriesPosts = post.series
-    ? [...ordered].reverse().filter(p => p.series === post.series)
+    ? posts.filter(p => p.series === post.series)
+        .sort((a, b) => (new Date(a.date) - new Date(b.date)) || String(a.slug).localeCompare(String(b.slug)))
     : [];
   const seriesIndex = seriesPosts.findIndex(p => p.slug === post.slug);
 

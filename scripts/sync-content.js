@@ -150,7 +150,10 @@ function serializeFrontmatter(data) {
 
 function syncPosts() {
   if (!fs.existsSync(sourceDir)) {
-    throw new Error(`Content source not found: ${sourceDir}`);
+    // 没有内容仓库时（比如 Cloudflare 自带的构建）只用仓库里的文章，不报错
+    console.warn(`Content source not found: ${sourceDir}, building with bundled posts only`);
+    ensureDir(generatedStaticRoot);
+    return;
   }
 
   removeDir(generatedPostsRoot);

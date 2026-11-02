@@ -202,6 +202,7 @@ svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width:
 .series-box summary span { margin-left: auto; color: var(--text-3); font-size: 13px; }
 .series-box ol { padding: 0 18px 14px 44px; color: var(--text-3); }
 .series-box li { margin: 4px 0; }
+.series-box li strong { color: var(--text); }
 .series-box a { color: var(--text-2); text-decoration: none; }
 .series-box a:hover { color: var(--accent); }
 @media (min-width: 1140px) { .article:has(.has-toc) .series-box { margin-left: calc((100% - 720px - 276px) / 2); } }
